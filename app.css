@@ -174,11 +174,8 @@ body {
   pointer-events: none;
   z-index: 10;
 }
-#sr-overlay.sr-loaded {
+#sr-overlay.sr-active {
   pointer-events: all;
-  cursor: default;
-}
-#sr-overlay.sr-loaded.sr-active {
   cursor: crosshair;
 }
 
