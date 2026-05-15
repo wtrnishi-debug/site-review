@@ -32,13 +32,51 @@ const SR = {
   document.getElementById('sr-share-btn').addEventListener('click', shareSession);
   const overlay = document.getElementById('sr-overlay');
   overlay.addEventListener('click', onOverlayClick);
-  overlay.addEventListener('wheel', e => {
-    e.preventDefault();
-    try {
-      document.getElementById('sr-frame').contentWindow.scrollBy(e.deltaX, e.deltaY);
-    } catch (_) {}
-  }, { passive: false });
+
+  let _scrollTimer = null;
+  window.addEventListener('wheel', () => {
+    if (!SR.annotating) return;
+    overlay.style.pointerEvents = 'none';
+    clearTimeout(_scrollTimer);
+    _scrollTimer = setTimeout(() => {
+      if (SR.annotating) overlay.style.pointerEvents = '';
+    }, 250);
+  }, { passive: true, capture: true });
+
+  document.getElementById('sr-frame').addEventListener('load', handleFrameNavigation);
 })();
+
+// ── Frame navigation ──────────────────────────────────
+async function handleFrameNavigation() {
+  if (!SR.sessionId) return;
+  let newUrl;
+  try {
+    newUrl = document.getElementById('sr-frame').contentWindow.location.href;
+  } catch (_) {
+    return;
+  }
+  if (!newUrl || newUrl === 'about:blank' || newUrl === SR.siteUrl) return;
+
+  SR.siteUrl = newUrl;
+  document.getElementById('sr-url-input').value = newUrl;
+  clearPins();
+  SR.comments = [];
+  SR.selectedId = null;
+  closePopover();
+  renderSidebar();
+
+  try {
+    const existing = await sr_findSession(newUrl);
+    if (existing) {
+      SR.sessionId = existing.id;
+    } else {
+      const session = await sr_createSession(newUrl);
+      SR.sessionId = session.id;
+    }
+    updateUrlParams();
+    await loadComments();
+  } catch (_) {}
+}
 
 // ── URL / Session ─────────────────────────────────────
 async function handleOpen() {

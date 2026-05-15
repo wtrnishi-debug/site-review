@@ -15,6 +15,16 @@ async function sr_getSession(id) {
   return data;
 }
 
+async function sr_findSession(siteUrl) {
+  const { data } = await sr_sb
+    .from('sr_sessions').select('*')
+    .eq('site_url', siteUrl)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+  return data;
+}
+
 async function sr_getComments(sessionId) {
   const { data } = await sr_sb
     .from('sr_comments').select('*')
