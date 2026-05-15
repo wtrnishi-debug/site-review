@@ -1,5 +1,5 @@
-const SR_SUPABASE_URL  = 'YOUR_SUPABASE_URL';
-const SR_SUPABASE_KEY  = 'YOUR_SUPABASE_ANON_KEY';
+const SR_SUPABASE_URL  = 'https://hiccejzetnmmvyopyykw.supabase.co';
+const SR_SUPABASE_KEY  = 'sb_publishable_tr0oTUqN6r2ufZ-32yC9Tg_KKTuyBNW';
 const sr_sb = supabase.createClient(SR_SUPABASE_URL, SR_SUPABASE_KEY);
 
 async function sr_createSession(siteUrl) {
