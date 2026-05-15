@@ -30,7 +30,14 @@ const SR = {
   document.getElementById('sr-mode-btn').addEventListener('click', toggleAnnotation);
   document.getElementById('sr-user-btn').addEventListener('click', toggleNamePanel);
   document.getElementById('sr-share-btn').addEventListener('click', shareSession);
-  document.getElementById('sr-overlay').addEventListener('click', onOverlayClick);
+  const overlay = document.getElementById('sr-overlay');
+  overlay.addEventListener('click', onOverlayClick);
+  overlay.addEventListener('wheel', e => {
+    e.preventDefault();
+    try {
+      document.getElementById('sr-frame').contentWindow.scrollBy(e.deltaX, e.deltaY);
+    } catch (_) {}
+  }, { passive: false });
 })();
 
 // ── URL / Session ─────────────────────────────────────
@@ -77,7 +84,7 @@ function toggleAnnotation() {
   const btn     = document.getElementById('sr-mode-btn');
   overlay.classList.toggle('sr-active', SR.annotating);
   btn.classList.toggle('sr-active', SR.annotating);
-  btn.querySelector('span').textContent = SR.annotating ? '注釈中' : '注釈';
+  btn.querySelector('span').textContent = SR.annotating ? 'コメント中' : 'コメント';
   if (!SR.annotating) closePopover();
 }
 
