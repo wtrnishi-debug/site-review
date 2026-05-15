@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <nav id="sr-nav">
+    <span class="sr-logo">Site Review</span>
+    <div class="sr-url-bar">
+      <input type="url" id="sr-url-input" placeholder="https://example.com" autocomplete="off" spellcheck="false">
+      <button class="sr-btn-primary" id="sr-open-btn">開く</button>
+    </div>
+    <div class="sr-nav-right">
+      <button class="sr-pill-btn" id="sr-mode-btn" title="注釈モードを切り替え">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.5 1.5L12.5 4.5L5 12H2V9L9.5 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span>注釈</span>
+      </button>
+      <button class="sr-pill-btn" id="sr-user-btn" title="名前を設定">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 12c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span id="sr-username-label">名前を設定</span>
+      </button>
+      <button class="sr-pill-btn" id="sr-share-btn" title="URLをコピーして共有">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="11" cy="2.5" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="11" cy="11.5" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="3" cy="7" r="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="4.3" y1="6.2" x2="9.7" y2="3.3" stroke="currentColor" stroke-width="1.3"/><line x1="4.3" y1="7.8" x2="9.7" y2="10.7" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span>共有</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="sr-main">
+
+    <div id="sr-viewer">
+      <div id="sr-empty">
+        <div class="sr-empty-inner">
+          <div class="sr-empty-icon">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="3" stroke="#444" stroke-width="2"/><line x1="4" y1="15" x2="36" y2="15" stroke="#444" stroke-width="2"/><circle cx="8.5" cy="11.5" r="1.5" fill="#444"/><circle cx="13.5" cy="11.5" r="1.5" fill="#444"/><circle cx="18.5" cy="11.5" r="1.5" fill="#444"/></svg>
+          </div>
+          <p class="sr-empty-title">URLを入力してサイトを開く</p>
+          <p class="sr-empty-sub">開いたら「注釈」ボタンをONにしてクリックでコメントを追加できます</p>
+        </div>
+      </div>
+      <iframe id="sr-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+      <div id="sr-overlay"></div>
+    </div>
+
+    <aside id="sr-sidebar">
+      <div class="sr-sidebar-hdr">
+        <span class="sr-sidebar-title">コメント</span>
+        <span class="sr-count-badge" id="sr-count-badge">0</span>
+      </div>
+      <div id="sr-comment-list">
+        <p class="sr-list-empty">コメントはまだありません</p>
+      </div>
+    </aside>
+
+  </div>
+
+  <div id="sr-toast" class="sr-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
