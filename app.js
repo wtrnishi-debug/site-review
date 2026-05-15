@@ -8,6 +8,8 @@ const SR = {
   selectedId:  null
 };
 
+let _intentionalLoad = false;
+
 // ── Init ──────────────────────────────────────────────
 (async function init() {
   SR.userName = localStorage.getItem('sr_username') || '';
@@ -47,35 +49,12 @@ const SR = {
 })();
 
 // ── Frame navigation ──────────────────────────────────
-async function handleFrameNavigation() {
-  if (!SR.sessionId) return;
-  let newUrl;
-  try {
-    newUrl = document.getElementById('sr-frame').contentWindow.location.href;
-  } catch (_) {
-    return;
-  }
-  if (!newUrl || newUrl === 'about:blank' || newUrl === SR.siteUrl) return;
-
-  SR.siteUrl = newUrl;
-  document.getElementById('sr-url-input').value = newUrl;
-  clearPins();
-  SR.comments = [];
-  SR.selectedId = null;
-  closePopover();
-  renderSidebar();
-
-  try {
-    const existing = await sr_findSession(newUrl);
-    if (existing) {
-      SR.sessionId = existing.id;
-    } else {
-      const session = await sr_createSession(newUrl);
-      SR.sessionId = session.id;
-    }
-    updateUrlParams();
-    await loadComments();
-  } catch (_) {}
+function handleFrameNavigation() {
+  if (_intentionalLoad) { _intentionalLoad = false; return; }
+  if (!SR.siteUrl) return;
+  _intentionalLoad = true;
+  document.getElementById('sr-frame').src = SR.siteUrl;
+  showToast('別ページへはURLバーから移動してください');
 }
 
 // ── URL / Session ─────────────────────────────────────
@@ -103,9 +82,11 @@ async function handleOpen() {
 }
 
 function showFrame(url) {
-  document.getElementById('sr-empty').style.display  = 'none';
-  document.getElementById('sr-frame').style.display  = 'block';
-  document.getElementById('sr-frame').src = url;
+  document.getElementById('sr-empty').style.display = 'none';
+  const frame = document.getElementById('sr-frame');
+  frame.style.display = 'block';
+  _intentionalLoad = true;
+  frame.src = url;
 }
 
 function updateUrlParams() {
