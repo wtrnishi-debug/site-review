@@ -1,5 +1,5 @@
 const SR_SUPABASE_URL  = 'https://hiccejzetnmmvyopyykw.supabase.co';
-const SR_SUPABASE_KEY  = 'sb_publishable_tr0oTUqN6r2ufZ-32yC9Tg_KKTuyBNW';
+const SR_SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhpY2NlanpldG5tbXZ5b3B5eWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MjkwMTYsImV4cCI6MjA5NDQwNTAxNn0.Oo_KrFflZhhWOlaN_hT9XZpBjhDFAgccK82CyrgC3qU';
 const sr_sb = supabase.createClient(SR_SUPABASE_URL, SR_SUPABASE_KEY);
 
 async function sr_createSession(siteUrl) {
