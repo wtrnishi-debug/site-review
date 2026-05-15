@@ -8,7 +8,6 @@ const SR = {
   selectedId:  null
 };
 
-let _intentionalLoad = false;
 
 // ── Init ──────────────────────────────────────────────
 (async function init() {
@@ -37,25 +36,12 @@ let _intentionalLoad = false;
 
   let _scrollTimer = null;
   window.addEventListener('wheel', () => {
-    if (!SR.annotating) return;
+    if (getComputedStyle(overlay).pointerEvents === 'none') return;
     overlay.style.pointerEvents = 'none';
     clearTimeout(_scrollTimer);
-    _scrollTimer = setTimeout(() => {
-      if (SR.annotating) overlay.style.pointerEvents = '';
-    }, 250);
+    _scrollTimer = setTimeout(() => { overlay.style.pointerEvents = ''; }, 250);
   }, { passive: true, capture: true });
-
-  document.getElementById('sr-frame').addEventListener('load', handleFrameNavigation);
 })();
-
-// ── Frame navigation ──────────────────────────────────
-function handleFrameNavigation() {
-  if (_intentionalLoad) { _intentionalLoad = false; return; }
-  if (!SR.siteUrl) return;
-  _intentionalLoad = true;
-  document.getElementById('sr-frame').src = SR.siteUrl;
-  showToast('別ページへはURLバーから移動してください');
-}
 
 // ── URL / Session ─────────────────────────────────────
 async function handleOpen() {
@@ -85,8 +71,8 @@ function showFrame(url) {
   document.getElementById('sr-empty').style.display = 'none';
   const frame = document.getElementById('sr-frame');
   frame.style.display = 'block';
-  _intentionalLoad = true;
   frame.src = url;
+  document.getElementById('sr-overlay').classList.add('sr-loaded');
 }
 
 function updateUrlParams() {
