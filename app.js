@@ -48,24 +48,48 @@ let _intentionalLoad = false;
   document.getElementById('sr-frame').addEventListener('load', handleFrameNavigation);
 })();
 
-// ── Frame navigation lock ─────────────────────────────
-function handleFrameNavigation() {
+// ── Frame navigation detection ────────────────────────
+async function handleFrameNavigation() {
   if (_intentionalLoad) { _intentionalLoad = false; return; }
   if (!SR.siteUrl) return;
 
-  let shouldReset = false;
+  let newUrl = null;
   try {
-    const url = document.getElementById('sr-frame').contentWindow.location.href;
-    if (url && url !== 'about:blank' && url !== SR.siteUrl) shouldReset = true;
+    const href = document.getElementById('sr-frame').contentWindow.location.href;
+    if (href && href !== 'about:blank' && href !== SR.siteUrl) newUrl = href;
+    else return;
   } catch (_) {
-    shouldReset = true;
+    // クロスオリジン：URL取得不可。コメントをクリアしてURLバーへ案内
+    clearPins();
+    SR.comments = [];
+    SR.sessionId = null;
+    SR.siteUrl   = null;
+    SR.selectedId = null;
+    closePopover();
+    renderSidebar();
+    const inp = document.getElementById('sr-url-input');
+    inp.value = '';
+    inp.placeholder = '移動先のURLを入力して「開く」';
+    inp.focus();
+    showToast('ページが変わりました。URLバーを更新してください');
+    return;
   }
 
-  if (shouldReset) {
-    _intentionalLoad = true;
-    document.getElementById('sr-frame').src = SR.siteUrl;
-    showToast('別ページへはURLバーから移動してください');
-  }
+  // 同オリジン：URL自動検出・セッション切り替え
+  SR.siteUrl = newUrl;
+  document.getElementById('sr-url-input').value = newUrl;
+  clearPins();
+  SR.comments  = [];
+  SR.selectedId = null;
+  closePopover();
+  renderSidebar();
+
+  try {
+    const existing = await sr_findSession(newUrl);
+    SR.sessionId = existing ? existing.id : (await sr_createSession(newUrl)).id;
+    updateUrlParams();
+    await loadComments();
+  } catch (_) {}
 }
 
 // ── URL / Session ─────────────────────────────────────
